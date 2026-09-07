@@ -1,6 +1,8 @@
+use crate::handler::amount::exchange_rate_handler;
+
 mod model;
 mod handler;
 
 fn main() {
-    println!("Hello, world!");
+    exchange_rate_handler()
 }

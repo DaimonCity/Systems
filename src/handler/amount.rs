@@ -1,7 +1,7 @@
 use std::io::stdin;
 use crate::model::amount::ExchangeRate;
 
-fn exchange_rate_handler() {
+pub fn exchange_rate_handler() {
     loop {
         let mut input = String::new();
 
@@ -18,9 +18,9 @@ fn exchange_rate_handler() {
             eprintln!("You did not enter a exchange rate");
             continue;
         }
-        
+
         let exchange_rate = ExchangeRate::make_from_string(input);
-        
+
         let exchange_rate = match exchange_rate {
             Ok(exchange_rate) => {
                 exchange_rate
@@ -30,7 +30,7 @@ fn exchange_rate_handler() {
                 continue
             }
         };
-        
+
         println!("{}", exchange_rate);
         println!("{:?}", exchange_rate);
     }
