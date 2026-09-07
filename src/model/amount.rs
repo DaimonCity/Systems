@@ -1,6 +1,5 @@
-use chrono::{DateTime, ParseError, Utc};
+use chrono::{DateTime, Utc};
 use std::fmt::{Display, Formatter};
-use std::num::ParseFloatError;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -8,7 +7,7 @@ pub struct ExchangeRate {
     pub first_exchange: String,
     pub second_exchange: String,
     pub rate: f64,
-    pub date: DateTime<Utc>,
+    pub date:  DateTime<Utc>,
 }
 
 impl ExchangeRate {
@@ -41,7 +40,7 @@ impl ExchangeRate {
             Err(e) => return Err(format!("Invalid rate: {}", e)),
         };
 
-        let date = date.parse::<DateTime<Utc>>();
+        let date = dateparser::parse(&date);
 
         let date = match date {
             Ok(d) => d,
@@ -60,8 +59,8 @@ impl ExchangeRate {
 impl Display for ExchangeRate {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!(
-            "From {} to {} with rate {}",
-            self.first_exchange, self.second_exchange, self.rate
+            "From {} to {} with rate {} at {}",
+            self.first_exchange, self.second_exchange, self.rate, self.date
         ))
     }
 }
