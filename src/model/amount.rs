@@ -4,8 +4,8 @@ use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct ExchangeRate {
-    pub first_exchange: String,
-    pub second_exchange: String,
+    pub from: String,
+    pub to: String,
     pub rate: f64,
     pub date:  DateTime<Utc>,
 }
@@ -18,8 +18,8 @@ impl ExchangeRate {
         date: DateTime<Utc>,
     ) -> Self {
         Self {
-            first_exchange: first_exchange.to_string(),
-            second_exchange: second_exchange.to_string(),
+            from: first_exchange.to_string(),
+            to: second_exchange.to_string(),
             rate,
             date,
         }
@@ -60,7 +60,7 @@ impl Display for ExchangeRate {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!(
             "From {} to {} with rate {} at {}",
-            self.first_exchange, self.second_exchange, self.rate, self.date
+            self.from, self.to, self.rate, self.date
         ))
     }
 }
