@@ -1,2 +1,3 @@
 pub mod amount;
-mod newtype;
+pub mod newtype;
+pub mod error;
