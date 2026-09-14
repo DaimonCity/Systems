@@ -1,6 +1,16 @@
 use chrono::{DateTime, Utc};
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
+use crate::model::newtype::BankName;
+use crate::traits::amount::Exchange;
+
+pub struct BankExchange {
+    bank_name: BankName,
+    fee: f64,
+    rate_sell: f64,
+    rate_buy: f64,
+    exchange_rate: ExchangeRate
+}
 
 #[derive(Debug, Clone)]
 pub struct ExchangeRate {
@@ -8,6 +18,41 @@ pub struct ExchangeRate {
     pub to: String,
     pub rate: f64,
     pub date:  DateTime<Utc>,
+}
+
+impl Exchange for ExchangeRate {
+    fn from(&self) -> String {
+        self.from.clone()
+    }
+
+    fn to(&self) -> String {
+        self.to.clone()
+    }
+
+    fn rate(&self) -> f64 {
+        self.rate
+    }
+
+    fn date(&self) -> DateTime<Utc> {
+        self.date
+    }
+}
+impl Exchange for BankExchange {
+    fn from(&self) -> String {
+        self.exchange_rate.from.clone()
+    }
+
+    fn to(&self) -> String {
+        self.exchange_rate.to.clone()
+    }
+
+    fn rate(&self) -> f64 {
+        self.exchange_rate.rate
+    }
+
+    fn date(&self) -> DateTime<Utc> {
+        self.exchange_rate.date
+    }
 }
 
 impl ExchangeRate {
