@@ -1,6 +1,14 @@
+use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
+#[derive(Debug)]
 pub struct BankName(String);
+
+impl Display for BankName {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl FromStr for BankName {
     type Err = BankNameError;

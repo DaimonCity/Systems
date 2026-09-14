@@ -1,11 +1,13 @@
-use crate::model::amount::ExchangeRate;
+use crate::model::amount::{AnyExchange, ExchangeRate};
+use crate::model::error::AppError;
 use std::collections::HashMap;
 use std::io::stdin;
 
-pub fn exchange_rate_handler() {
-    let mut array = Vec::with_capacity(10);
+pub fn exchange_rate_handler() -> Result<(), AppError> {
+    let mut array: Vec<AnyExchange> = Vec::with_capacity(10);
 
     loop {
+        println!("Enter exchange rate OR Q for exit: ");
         let mut input = String::new();
 
         match stdin().read_line(&mut input) {
@@ -17,26 +19,36 @@ pub fn exchange_rate_handler() {
         };
         let input = input.trim();
 
-        if input.is_empty() {
+        if input == "Q" {
             break;
         }
 
-        let exchange_rate = ExchangeRate::make_from_string(input);
-
-        let exchange_rate = match exchange_rate {
-            Ok(exchange_rate) => exchange_rate,
+        let rate = match AnyExchange::make_from_string(input) {
+            Ok(r) => r,
             Err(e) => {
-                eprintln!("{}", e);
+                eprintln!("Error input, {}", e);
                 continue;
             }
         };
 
-        println!("{}", exchange_rate);
-        println!("{:?}", exchange_rate);
-        array.push(exchange_rate);
+        println!("{:?}", rate);
+        println!("{:?}", rate);
+        array.push(rate);
+
     }
 
-    println!("{}", get_big_rate(&array));
+    println!("{}", get_big_rate(&unpack(&array)));
+    Ok(())
+}
+
+pub fn unpack(rates: &[AnyExchange]) -> Vec<ExchangeRate> {
+    rates
+        .iter()
+        .map(|rate| match rate {
+            AnyExchange::Rate(e) => e.clone(),
+            AnyExchange::Bank(e) => e.exchange_rate(),
+        })
+        .collect::<Vec<ExchangeRate>>()
 }
 
 pub fn get_big_rate(rates: &[ExchangeRate]) -> &ExchangeRate {

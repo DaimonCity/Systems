@@ -5,5 +5,5 @@ mod handler;
 pub mod traits;
 
 fn main() {
-    exchange_rate_handler()
+    let _ = exchange_rate_handler();
 }
