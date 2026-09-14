@@ -1,10 +1,11 @@
 use std::num::ParseFloatError;
-use crate::model::newtype::BankNameError;
+use crate::model::newtype::{BankNameError, NameError};
 use anyhow::Error;
 
 #[derive(Debug)]
 pub enum AppError {
     BankNameError(BankNameError),
+    NameError(NameError),
     ParseFloatError(ParseFloatError),
     DateParseError(Error),
     InternalError(String),
@@ -26,6 +27,9 @@ impl std::fmt::Display for AppError {
             AppError::InternalError(e) => {
                 write!(f, "InternalError: {}", e)
             }
+            AppError::NameError(e) => {
+                write!(f, "NameError: {}", e)
+            }
         }
     }
 }
@@ -43,3 +47,4 @@ macro_rules! err_impl {
 err_impl!(BankNameError, BankNameError);
 err_impl!(ParseFloatError, ParseFloatError);
 err_impl!(Error, DateParseError);
+err_impl!(NameError, NameError);

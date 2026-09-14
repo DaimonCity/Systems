@@ -2,6 +2,7 @@ use crate::model::amount::{AnyExchange, ExchangeRate};
 use crate::model::error::AppError;
 use std::collections::HashMap;
 use std::io::stdin;
+use crate::traits::amount::Exchange;
 
 pub fn exchange_rate_handler() -> Result<(), AppError> {
     let mut array: Vec<AnyExchange> = Vec::with_capacity(10);
@@ -47,6 +48,7 @@ pub fn unpack(rates: &[AnyExchange]) -> Vec<ExchangeRate> {
         .map(|rate| match rate {
             AnyExchange::Rate(e) => e.clone(),
             AnyExchange::Bank(e) => e.exchange_rate(),
+            AnyExchange::Person(e) => e.exchange_rate()
         })
         .collect::<Vec<ExchangeRate>>()
 }

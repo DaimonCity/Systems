@@ -3,43 +3,69 @@ use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct BankName(String);
+#[derive(Debug)]
+pub struct Name(String);
 
-impl Display for BankName {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
+macro_rules! impl_str_newtype {
+    ($newtype:ident, $error:ident) => {
+        impl Display for $newtype {
+            fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+                write!(f, "{}", self.0)
+            }
+        }
+        
+        impl FromStr for $newtype {
+            type Err = $error;
+            
+            fn from_str(input: &str) -> Result<Self, Self::Err> {
+                if input.len() < 3 {
+                    return Err($error::MinUnneeded);
+                }
+
+                if input.len() > 50 {
+                    return Err($error::MaxExceeded);
+                }
+                
+                Ok(Self(input.to_string()))
+            }
+        }
+    };
 }
 
-impl FromStr for BankName {
-    type Err = BankNameError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.len() < 3 {
-            return Err(BankNameError::MinUnneeded);
-        }
+impl_str_newtype!(Name, NameError);
+impl_str_newtype!(BankName, BankNameError);
 
-        if s.len() > 50 {
-            return Err(BankNameError::MaxExceeded);
+macro_rules! impl_error_newtype {
+    ($error:ident) => {
+        impl Display for $error {
+            
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                match self {
+                    $error::MaxExceeded => {
+                        write!(f, "Maximum name exceeded")
+                    }
+                    $error::MinUnneeded => {
+                        write!(f, "Minimum name unneeded")
+                    } 
+                }
+            }
         }
-        Ok(BankName(s.to_string()))
-    }
+    };
 }
+
 
 
 #[derive(Debug)]
-pub enum BankNameError{
+pub enum BankNameError {
+    MaxExceeded,
+    MinUnneeded,
+}
+
+#[derive(Debug)]
+pub enum NameError {
     MaxExceeded,
     MinUnneeded
 }
 
-impl std::fmt::Display for BankNameError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self {
-            BankNameError::MaxExceeded => {
-                write!(f, "Maximum bank name exceeded")
-            }
-            BankNameError::MinUnneeded => {
-                write!(f, "Minimum bank name unneeded")
-            }
-        }
-    }
-}
+impl_error_newtype!(BankNameError);
+impl_error_newtype!(NameError);
