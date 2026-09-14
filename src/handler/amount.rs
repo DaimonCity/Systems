@@ -1,7 +1,6 @@
 use crate::model::amount::ExchangeRate;
 use std::collections::HashMap;
 use std::io::stdin;
-use std::iter::Map;
 
 pub fn exchange_rate_handler() {
     let mut array = Vec::with_capacity(10);
@@ -73,7 +72,7 @@ fn get_main_amount(rates: &[ExchangeRate]) -> String {
     let max_pair = map.iter().max_by_key(|&(_, value)| value);
 
     match max_pair {
-        Some((key, value)) => key.to_string(),
+        Some((key, _)) => key.to_string(),
         None => panic!("Map is empty"),
     }
 }
