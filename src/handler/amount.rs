@@ -9,6 +9,10 @@ pub fn exchange_rate_handler() -> Result<(), AppError> {
 
     loop {
         println!("Enter exchange rate OR Q for exit: ");
+        println!("#1 Schema: <amount_name> <amount_name> <rate value> <date> ");
+        println!("#2 Schema: <bank name> <fee value> <rate sell> <rate buy> #1 Schema");
+        println!("#3 Schema: <person name> <rate sell> <rate buy> #1 Schema");
+
         let mut input = String::new();
 
         match stdin().read_line(&mut input) {

@@ -241,19 +241,39 @@ impl Exchange for PersonExchange {
 
 impl AnyExchange {
     pub fn make_from_string(input: &str) -> Result<AnyExchange, AppError> {
+        let mut errors = Vec::with_capacity(5);
 
-        if let Ok(r) = BankExchange::make_from_str(input) {
-            return Ok(AnyExchange::Bank(r));
+        match BankExchange::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Bank(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
         }
 
-        if let Ok(r) = ExchangeRate::make_from_str(input) {
-            return Ok(AnyExchange::Rate(r));
+        match ExchangeRate::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Rate(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
         }
 
-        if let Ok(r) = PersonExchange::make_from_str(input) {
-            return Ok(AnyExchange::Person(r));
+        match PersonExchange::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Person(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
         }
-        Err(AppError::InternalError("Parse Exchange error".to_string()))
+
+        let errors = errors.iter().map(|e| e.to_string()).collect::<Vec<String>>().join("\n");
+        Err(AppError::InternalError(
+            format!("Parse Exchange error: {}", errors)
+        ))
     }
 }
 
@@ -274,6 +294,7 @@ impl ExchangeRate {
 
     pub fn make_from_string(input: &str) -> Result<ExchangeRate, AppError> {
         let input_vec = input.split(' ').collect::<Vec<&str>>();
+        if input_vec.len() != 4 {return Err(AppError::InternalError("Invalid size".to_string()))}
 
         let first_exchange = input_vec[0].to_string();
         let second_exchange = input_vec[1].to_string();
