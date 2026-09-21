@@ -299,7 +299,7 @@ impl ExchangeRate {
         }
     }
 
-    pub fn make_from_string(input: &str) -> Result<ExchangeRate, AppError> {
+    pub fn make_from_string(input: &str) -> Result<Self, AppError> {
         let input_vec = input.split(' ').collect::<Vec<&str>>();
         if input_vec.len() != 4 {return Err(AppError::Internal("Invalid size".to_string()))}
 
