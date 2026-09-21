@@ -47,9 +47,6 @@ impl BankExchange {
         }
     }
 
-    pub fn ref_exchange_rate(&self) -> &ExchangeRate {
-        &self.exchange_rate
-    }
 }
 
 #[derive(Debug)]
