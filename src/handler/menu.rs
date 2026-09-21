@@ -26,6 +26,22 @@ impl Menu {
         println!("4. Назад");
     }
 
+    pub fn show_schema(&self, option: u8) -> Result<(), AppError> {
+        self.clear();
+        println!("===== Schema =====");
+        match option {
+            1 => println!("<amount_name> <amount_name> <rate value> <date>"),
+            2 => println!(
+                "<bank name> <fee value> <rate sell> <rate buy> <amount_name> <amount_name> <rate value> <date>"
+            ),
+            3 => println!(
+                "<person name> <rate sell> <rate buy> <amount_name> <amount_name> <rate value> <date>"
+            ),
+            _ => return Err(AppError::InternalError("Unknown option".to_string())),
+        }
+        Ok(())
+    }
+
     pub fn clear(&self) {
         if cfg!(target_os = "windows") {
             Command::new("cls").status().ok();
