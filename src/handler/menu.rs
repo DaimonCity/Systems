@@ -1,7 +1,7 @@
-use crate::model::error::AppError;
-use std::io::stdin;
 use crate::handler::amount::ExchangeHandler;
+use crate::model::error::AppError;
 use crate::traits::handler::StrHandler;
+use std::io::stdin;
 
 pub struct Menu {}
 
@@ -21,6 +21,7 @@ impl Menu {
 
     pub fn show_rates(&self) {
         self.clear();
+        println!("===== Rates =====");
         println!("1. Ввести обычный курс");
         println!("2. Ввести банковский курс");
         println!("3. Ввести курс человека");
@@ -49,27 +50,20 @@ impl Menu {
 
     pub fn schema(&mut self, option: u8, handler: &mut ExchangeHandler) -> Result<(), AppError> {
         self.show_schema(option)?;
-        let mut input = self.get_input();
-        loop {
-            if let Err(e) = input {
-                println!("{}", e);
-                input = self.get_input();
-                continue;
-            } else {
-                break;
-            }
-        }
-        let input = input?;
+        let input = self.input();
         handler.handle(&input)?;
         Ok(())
     }
 
-
-    pub fn flow_from_main(&mut self, option: u8, handler: &mut ExchangeHandler) -> Result<bool, AppError> {
+    pub fn flow_from_main(
+        &mut self,
+        option: u8,
+        handler: &mut ExchangeHandler,
+    ) -> Result<bool, AppError> {
         match option {
-            1 => self.schema(option, handler)?,
-            2 => self.schema(option, handler)?,
-            3 => self.schema(option, handler)?,
+            1 => self.flow_to_rate(handler)?,
+            2 => {}
+            3 => {}
             4 => return Ok(true),
             _ => return Err(AppError::InternalError("Unknown option".to_string())),
         }
@@ -77,7 +71,40 @@ impl Menu {
         Ok(false)
     }
 
-    pub fn get_input(&self) -> Result<String, AppError> {
+    pub fn flow_to_rate(&mut self, handler: &mut ExchangeHandler) -> Result<(), AppError> {
+        self.show_rates();
+        let option = self.get_u8();
+        match option {
+            1 => self.schema(option, handler)?,
+            2 => self.schema(option, handler)?,
+            3 => self.schema(option, handler)?,
+            4 => {}
+            _ => return Err(AppError::InternalError("Unknown option".to_string())),
+        }
+        Ok(())
+    }
+
+    fn get_u8(&mut self) -> u8 {
+        let mut num = self.input().trim().parse::<u8>();
+        while let Err(e) = num {
+            println!("{}", e);
+            num = self.input().trim().parse::<u8>();
+            continue;
+        }
+        num.unwrap()
+    }
+
+    pub fn input(&mut self) -> String {
+        let mut input = self.raw_input();
+        while let Err(e) = input {
+            println!("{}", e);
+            input = self.raw_input();
+            continue;
+        }
+        input.unwrap()
+    }
+
+    fn raw_input(&self) -> Result<String, AppError> {
         let mut input: String = String::new();
 
         if let Err(e) = stdin().read_line(&mut input) {

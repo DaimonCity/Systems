@@ -22,28 +22,23 @@ impl App {
     fn app_loop(&mut self) {
         loop {
             self.menu.show_main_menu();
-            let key = self.menu.get_input();
-            if let Err(e) = key {
-                println!("{}", e);
-                continue;
-            }
-            let key = key.unwrap();
+            let key = self.menu.input();
+           
             let option: Result<u8, _> = key.trim().parse();
             if let Err(e) = option {
                 println!("{}", e);
                 continue;
             }
             let option = option.unwrap();
+            
             let flow = self.menu.flow_from_main(option, &mut self.exchange_handler);
 
             if let Err(e) = flow
             {
                 println!("{}", e);
                 stdin().read_line(&mut String::new()).ok();
-            } else {
-                if flow.unwrap() {
-                    break;
-                };
+            } else if flow.unwrap() {
+                break;
             }
         }
     }
