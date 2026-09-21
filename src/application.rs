@@ -1,7 +1,6 @@
 use crate::handler::amount::ExchangeHandler;
 use crate::handler::menu;
-use crate::model::error::AppError;
-use crate::traits::handler::StrHandler;
+use std::io::stdin;
 
 pub struct App {
     menu: menu::Menu,
@@ -20,32 +19,6 @@ impl App {
         self.app_loop()
     }
 
-    pub fn schema(&mut self, option: u8) -> Result<(), AppError> {
-        self.menu.show_schema(option)?;
-        let mut input = self.menu.get_input();
-        loop {
-            if let Err(e) = input {
-                println!("{}", e);
-                input = self.menu.get_input();
-                continue;
-            } else {
-                break;
-            }
-        }
-        let input = input?;
-        self.exchange_handler.handle(&input)?;
-        Ok(())
-    }
-
-    pub fn flow_from_main(&mut self, option: u8) -> Result<(), AppError> {
-        if option <= 0 || option >= 5 {
-            return Err(AppError::InternalError("Unknown option".to_string()));
-        }
-        self.schema(option)?;
-
-        Ok(())
-    }
-
     fn app_loop(&mut self) {
         loop {
             self.menu.show_main_menu();
@@ -55,11 +28,22 @@ impl App {
                 continue;
             }
             let key = key.unwrap();
+            let option: Result<u8, _> = key.trim().parse();
+            if let Err(e) = option {
+                println!("{}", e);
+                continue;
+            }
+            let option = option.unwrap();
+            let flow = self.menu.flow_from_main(option, &mut self.exchange_handler);
 
-            if let Ok(n) = key.parse()
-                && let Err(e) = self.flow_from_main(n)
+            if let Err(e) = flow
             {
                 println!("{}", e);
+                stdin().read_line(&mut String::new()).ok();
+            } else {
+                if flow.unwrap() {
+                    break;
+                };
             }
         }
     }
