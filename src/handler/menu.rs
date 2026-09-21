@@ -39,7 +39,7 @@ impl Menu {
             3 => println!(
                 "<person name> <rate sell> <rate buy> <amount_name> <amount_name> <rate value> <date>"
             ),
-            _ => return Err(AppError::InternalError("Unknown option".to_string())),
+            _ => return Err(AppError::Internal("Unknown option".to_string())),
         }
         Ok(())
     }
@@ -65,7 +65,7 @@ impl Menu {
             2 => {}
             3 => {}
             4 => return Ok(true),
-            _ => return Err(AppError::InternalError("Unknown option".to_string())),
+            _ => return Err(AppError::Internal("Unknown option".to_string())),
         }
 
         Ok(false)
@@ -79,7 +79,7 @@ impl Menu {
             2 => self.schema(option, handler)?,
             3 => self.schema(option, handler)?,
             4 => {}
-            _ => return Err(AppError::InternalError("Unknown option".to_string())),
+            _ => return Err(AppError::Internal("Unknown option".to_string())),
         }
         Ok(())
     }
@@ -108,7 +108,7 @@ impl Menu {
         let mut input: String = String::new();
 
         if let Err(e) = stdin().read_line(&mut input) {
-            return Err(AppError::IoError(e));
+            return Err(AppError::Io(e));
         }
         Ok(input)
     }

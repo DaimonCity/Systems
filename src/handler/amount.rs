@@ -35,7 +35,7 @@ impl ExchangeHandler {
 
         match amount.last() {
             Some(last) => Ok(last.clone()),
-            None => Err(AppError::InternalError("The exchange rate is empty".to_string())),
+            None => Err(AppError::Internal("The exchange rate is empty".to_string())),
         }
     }
 

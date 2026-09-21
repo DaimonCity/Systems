@@ -5,34 +5,34 @@ use std::io::Error as IoError;
 
 #[derive(Debug)]
 pub enum AppError {
-    BankNameError(BankNameError),
-    IoError(IoError),
-    NameError(NameError),
-    ParseFloatError(ParseFloatError),
-    DateParseError(Error),
-    InternalError(String),
+    BankName(BankNameError),
+    Io(IoError),
+    Name(NameError),
+    ParseFloat(ParseFloatError),
+    DateParse(Error),
+    Internal(String),
 }
 
 impl std::error::Error for AppError {}
 impl std::fmt::Display for AppError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AppError::BankNameError(e) => {
+            AppError::BankName(e) => {
                 write!(f, "BankNameError: {}", e)
             }
-            AppError::ParseFloatError(e) => {
+            AppError::ParseFloat(e) => {
                 write!(f, "ParseFloatError: {}", e)
             }
-            AppError::DateParseError(e) => {
+            AppError::DateParse(e) => {
                 write!(f, "DateParseError: {}", e)
             }
-            AppError::InternalError(e) => {
+            AppError::Internal(e) => {
                 write!(f, "InternalError: {}", e)
             }
-            AppError::NameError(e) => {
+            AppError::Name(e) => {
                 write!(f, "NameError: {}", e)
             }
-            AppError::IoError(e) => {
+            AppError::Io(e) => {
                 write!(f, "IoError: {}", e)
             }
         }
@@ -49,8 +49,8 @@ macro_rules! err_impl {
     };
 }
 
-err_impl!(BankNameError, BankNameError);
-err_impl!(ParseFloatError, ParseFloatError);
-err_impl!(Error, DateParseError);
-err_impl!(NameError, NameError);
-err_impl!(IoError, IoError);
+err_impl!(BankNameError, BankName);
+err_impl!(ParseFloatError, ParseFloat);
+err_impl!(Error, DateParse);
+err_impl!(NameError, Name);
+err_impl!(IoError, Io);
