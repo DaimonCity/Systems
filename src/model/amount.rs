@@ -98,7 +98,39 @@ impl Exchange for AnyExchange {
     }
 
     fn make_from_str(input: &str) -> Result<AnyExchange, AppError> {
-        Self::make_from_string(input)
+        let mut errors = Vec::with_capacity(5);
+
+        match BankExchange::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Bank(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
+        }
+
+        match ExchangeRate::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Rate(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
+        }
+
+        match PersonExchange::make_from_str(input) {
+            Ok(r) => {
+                return Ok(AnyExchange::Person(r));
+            }
+            Err(e) => {
+                errors.push(e)
+            }
+        }
+
+        let errors = errors.iter().map(|e| e.to_string()).collect::<Vec<String>>().join("\n");
+        Err(AppError::Internal(
+            format!("Parse Exchange error: {}", errors)
+        ))
     }
 }
 
@@ -248,44 +280,6 @@ impl Exchange for PersonExchange {
             rate_sell,
             rate_buy,
             rate
-        ))
-    }
-}
-
-impl AnyExchange {
-    pub fn make_from_string(input: &str) -> Result<AnyExchange, AppError> {
-        let mut errors = Vec::with_capacity(5);
-
-        match BankExchange::make_from_str(input) {
-            Ok(r) => {
-                return Ok(AnyExchange::Bank(r));
-            }
-            Err(e) => {
-                errors.push(e)
-            }
-        }
-
-        match ExchangeRate::make_from_str(input) {
-            Ok(r) => {
-                return Ok(AnyExchange::Rate(r));
-            }
-            Err(e) => {
-                errors.push(e)
-            }
-        }
-
-        match PersonExchange::make_from_str(input) {
-            Ok(r) => {
-                return Ok(AnyExchange::Person(r));
-            }
-            Err(e) => {
-                errors.push(e)
-            }
-        }
-
-        let errors = errors.iter().map(|e| e.to_string()).collect::<Vec<String>>().join("\n");
-        Err(AppError::InternalError(
-            format!("Parse Exchange error: {}", errors)
         ))
     }
 }
