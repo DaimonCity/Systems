@@ -1,6 +1,5 @@
 use crate::model::error::AppError;
 use std::io::stdin;
-use std::process::Command;
 
 pub struct Menu {}
 
@@ -43,11 +42,7 @@ impl Menu {
     }
 
     pub fn clear(&self) {
-        if cfg!(target_os = "windows") {
-            Command::new("cls").status().ok();
-        } else {
-            Command::new("clear").status().ok();
-        }
+        clearscreen::clear().expect("Не удалось очистить экран");
     }
 
     pub fn get_input(&self) -> Result<String, AppError> {
