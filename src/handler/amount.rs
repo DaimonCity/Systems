@@ -61,6 +61,18 @@ impl ExchangeHandler {
             None => panic!("Map is empty"),
         }
     }
+
+    pub fn handle_rate<T: Exchange>(&mut self, input: &str) -> Result<(), AppError> {
+        let input = input.trim();
+        let rate = match T::make_from_str(input) {
+            Ok(r) => r,
+            Err(e) => {
+                return Err(e);
+            }
+        };
+        self.array.push(rate.pack_to_any()?);
+        Ok(())
+    }
 }
 
 impl StrHandler for ExchangeHandler {

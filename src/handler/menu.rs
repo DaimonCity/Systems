@@ -1,7 +1,8 @@
 use crate::handler::amount::ExchangeHandler;
 use crate::model::error::AppError;
-use crate::traits::handler::StrHandler;
 use std::io::stdin;
+use crate::model::amount::{BankExchange, ExchangeRate, PersonExchange};
+use crate::traits::amount::Exchange;
 
 pub struct Menu {}
 
@@ -48,10 +49,10 @@ impl Menu {
         clearscreen::clear().expect("Не удалось очистить экран");
     }
 
-    pub fn schema(&mut self, option: u8, handler: &mut ExchangeHandler) -> Result<(), AppError> {
+    pub fn schema<T: Exchange>(&mut self, option: u8, handler: &mut ExchangeHandler) -> Result<(), AppError> {
         self.show_schema(option)?;
         let input = self.input();
-        handler.handle(&input)?;
+        handler.handle_rate::<T>(&input)?;
         Ok(())
     }
 
@@ -75,9 +76,9 @@ impl Menu {
         self.show_rates();
         let option = self.get_u8();
         match option {
-            1 => self.schema(option, handler)?,
-            2 => self.schema(option, handler)?,
-            3 => self.schema(option, handler)?,
+            1 => self.schema::<ExchangeRate>(option, handler)?,
+            2 => self.schema::<BankExchange>(option, handler)?,
+            3 => self.schema::<PersonExchange>(option, handler)?,
             4 => {}
             _ => return Err(AppError::Internal("Unknown option".to_string())),
         }
