@@ -93,6 +93,10 @@ impl Exchange for AnyExchange {
         }
     }
 
+    fn pack_to_any(self) -> Result<AnyExchange, AppError> {
+        Ok(self)
+    }
+
     fn make_from_str(input: &str) -> Result<AnyExchange, AppError> {
         Self::make_from_string(input)
     }
@@ -120,6 +124,10 @@ impl Exchange for ExchangeRate {
         self.clone()
     }
 
+    fn pack_to_any(self) -> Result<AnyExchange, AppError> {
+        Ok(AnyExchange::Rate(self))
+    }
+
     fn make_from_str(input: &str) -> Result<Self, AppError> {
         Self::make_from_string(input)
     }
@@ -144,6 +152,10 @@ impl Exchange for BankExchange {
 
     fn exchange_rate(&self) -> ExchangeRate {
         self.exchange_rate.clone()
+    }
+
+    fn pack_to_any(self) -> Result<AnyExchange, AppError> {
+        Ok(AnyExchange::Bank(self))
     }
 
     fn make_from_str(input: &str) -> Result<Self, AppError> {
@@ -199,6 +211,10 @@ impl Exchange for PersonExchange {
 
     fn exchange_rate(&self) -> ExchangeRate {
         self.exchange_rate.clone()
+    }
+
+    fn pack_to_any(self) -> Result<AnyExchange, AppError> {
+        Ok(AnyExchange::Person(self))
     }
 
     fn make_from_str(input: &str) -> Result<Self, AppError>
