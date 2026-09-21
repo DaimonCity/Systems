@@ -78,3 +78,56 @@ impl StrHandler for ExchangeHandler {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn creation_simple_rate() {
+        let input = "dol rus 80 2026-09-09";
+        let mut handler = ExchangeHandler::new();
+        handler.handle(input).unwrap();
+        assert_eq!(handler.array.len(), 1);
+    }
+    #[test]
+    fn creation_bank_rate() {
+        let input = "sber 0.5 84 82 dol rus 83 2026-09-09";
+        let mut handler = ExchangeHandler::new();
+        handler.handle(input).unwrap();
+        assert_eq!(handler.array.len(), 1);
+    }
+
+    #[test]
+    fn creation_person_rate() {
+        let input = "dima 84 82 dol rus 83 2026-09-09";
+        let mut handler = ExchangeHandler::new();
+        handler.handle(input).unwrap();
+        assert_eq!(handler.array.len(), 1);
+    }
+
+    #[test]
+    fn err_check() {
+        let input = "dol rus 83gl;gd;m gldgmdf fdslfsdl 2026-09-09";
+        let mut handler = ExchangeHandler::new();
+        let err = handler.handle(input);
+        assert!(err.is_err());
+    }
+
+    #[test]
+    fn check_main_amount() {
+        let input = "dol rus 80 2026-09-09";
+        let mut handler = ExchangeHandler::new();
+        handler.handle(input).unwrap();
+
+        let input = "dol belarus 180 2026-09-09";
+        handler.handle(input).unwrap();
+
+        let input = "dol euro 100 2026-09-09";
+        handler.handle(input).unwrap();
+
+        let input = "dima 84 82 dol rus 83 2026-09-09";
+        handler.handle(input).unwrap();
+        assert_eq!(handler.array.len(), 4);
+        assert!(handler.get_big_rate().is_ok());
+    }
+}
