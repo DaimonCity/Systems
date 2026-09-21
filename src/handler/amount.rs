@@ -66,7 +66,7 @@ impl ExchangeHandler {
 impl StrHandler for ExchangeHandler {
     fn handle(&mut self, input: &str) -> Result<(), AppError> {
         let input = input.trim();
-        let rate = match AnyExchange::make_from_string(input) {
+        let rate = match AnyExchange::make_from_str(input) {
             Ok(r) => r,
             Err(e) => {
                 return Err(e);
