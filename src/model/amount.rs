@@ -5,7 +5,7 @@ use crate::model::error::AppError;
 use crate::model::newtype::{BankName, Name};
 use crate::traits::amount::Exchange;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BankExchange {
     bank_name: BankName,
     fee: f64,
@@ -14,12 +14,24 @@ pub struct BankExchange {
     exchange_rate: ExchangeRate
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PersonExchange {
     person_name: Name,
     rate_sell: f64,
     rate_buy: f64,
     exchange_rate: ExchangeRate
+}
+
+impl PersonExchange {
+    pub(crate) fn name(&self) -> String {
+        self.person_name.to_string()
+    }
+    pub(crate) fn rate_buy(&self) -> f64 {
+        self.rate_buy
+    }
+    pub(crate) fn rate_sell(&self) -> f64 {
+        self.rate_sell
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -47,9 +59,24 @@ impl BankExchange {
         }
     }
 
+    pub fn bank_name(&self) -> String {
+        self.bank_name.to_string()
+    }
+
+    pub fn fee(&self) -> f64 {
+        self.fee
+    }
+
+    pub fn rate_sell(&self) -> f64 {
+        self.rate_sell
+    }
+
+    pub fn rate_buy(&self) -> f64 {
+        self.rate_buy
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AnyExchange {
     Rate(ExchangeRate),
     Bank(BankExchange),

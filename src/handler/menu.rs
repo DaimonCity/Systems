@@ -1,10 +1,11 @@
 use crate::handler::amount::ExchangeHandler;
+use crate::model::amount::{AnyExchange, BankExchange, ExchangeRate, PersonExchange};
+use crate::model::dto::AnyExchangesDto;
 use crate::model::error::AppError;
-use std::io::stdin;
-use crate::model::amount::{BankExchange, ExchangeRate, PersonExchange};
 use crate::traits::amount::Exchange;
+use std::io::stdin;
 
-pub struct Menu {}
+pub struct Menu;
 
 impl Menu {
     pub fn new() -> Self {
@@ -49,7 +50,11 @@ impl Menu {
         clearscreen::clear().expect("Не удалось очистить экран");
     }
 
-    pub fn schema<T: Exchange>(&mut self, option: u8, handler: &mut ExchangeHandler) -> Result<(), AppError> {
+    pub fn schema<T: Exchange>(
+        &mut self,
+        option: u8,
+        handler: &mut ExchangeHandler,
+    ) -> Result<(), AppError> {
         self.show_schema(option)?;
         let input = self.input();
         handler.handle_rate::<T>(&input)?;
@@ -63,8 +68,25 @@ impl Menu {
     ) -> Result<bool, AppError> {
         match option {
             1 => self.flow_to_rate(handler)?,
-            2 => {}
-            3 => {}
+            2 => {
+                let file = crate::serde::load_from_json::<AnyExchangesDto>();
+                if let Err(e) = file {
+                    return Err(AppError::Internal(e.to_string()));
+                };
+                let file = file.unwrap();
+                let data = file
+                    .0
+                    .into_iter()
+                    .map(AnyExchange::try_from)
+                    .collect::<Result<Vec<AnyExchange>, AppError>>()?;
+                handler.set_array(data);
+            }
+            3 => {
+                let rates = AnyExchangesDto::new(handler.array())?;
+                if let Err(e) = crate::serde::save_to_json(rates) {
+                    return Err(AppError::Internal(e.to_string()));
+                };
+            }
             4 => return Ok(true),
             _ => return Err(AppError::Internal("Unknown option".to_string())),
         }

@@ -1,9 +1,11 @@
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BankName(String);
-#[derive(Debug)]
+
+
+#[derive(Debug, Clone)]
 pub struct Name(String);
 
 macro_rules! impl_str_newtype {

@@ -13,6 +13,14 @@ impl ExchangeHandler {
         ExchangeHandler { array: Vec::new() }
     }
 
+    pub fn set_array(&mut self, array: Vec<AnyExchange>) {
+        self.array = array;
+    }
+    
+    pub fn array(&self) -> Vec<AnyExchange> {
+        self.array.clone()
+    }
+    
     pub fn unpack(&self) -> Vec<ExchangeRate> {
         self.array
             .iter()

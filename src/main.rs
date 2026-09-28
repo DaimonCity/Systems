@@ -1,10 +1,15 @@
-use crate::handler::amount::exchange_rate_handler;
+use crate::application::App;
 
 mod model;
 mod handler;
-pub mod traits;
+mod traits;
 mod application;
+pub mod serde;
 
 fn main() {
-    let _ = exchange_rate_handler();
+    // let _ = exchange_rate_handler();
+    let mut app = App::new();
+
+    app.start();
 }
+
