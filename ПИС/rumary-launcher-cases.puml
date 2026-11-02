@@ -1,0 +1,72 @@
+@startuml launcher-use-cases
+title Диаграмма прецедентов: Rumary Launcher
+
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+actor "Пользователь" as Player
+
+  ' --- Аккаунт ---
+  usecase "Зарегистрироваться" as UC_Register
+  usecase "Войти" as UC_Login
+  usecase "Ввести TOTP-код" as UC_Totp
+  usecase "Увидеть причину бана" as UC_BanReason
+  usecase "Выйти" as UC_Logout
+  usecase "Обновить сессию" as UC_Refresh
+
+  ' --- Игра ---
+  usecase "Играть" as UC_Play
+  usecase "Подготовить конфигурацию" as UC_PrepareConfig
+  usecase "Подготовить экземпляр" as UC_PrepareInstance
+  usecase "Синхронизировать файлы" as UC_SyncFiles
+  usecase "Видеть прогресс и статус загрузки" as UC_Status
+
+  ' --- Скин ---
+  usecase "Сменить скин" as UC_Skin
+
+  ' --- Обновление лаунчера ---
+  usecase "Проверить обновления" as UC_CheckUpdate
+  usecase "Обновить лаунчер" as UC_Update
+
+  ' --- Настройки ---
+  usecase "Сменить язык" as UC_Language
+  usecase "Настроить лаунчер" as UC_Settings
+  
+' ===== Игрок =====
+Player --> UC_Register
+Player --> UC_Login
+Player --> UC_Logout
+Player --> UC_Play
+Player --> UC_Status
+Player --> UC_Skin
+Player --> UC_CheckUpdate
+Player --> UC_Language
+Player --> UC_Settings
+Player --> UC_Refresh
+
+' ===== Отношения между прецедентами =====
+UC_Totp ..> UC_Login : <<extend>>
+UC_BanReason ..> UC_Login : <<extend>>
+
+UC_Play ..> UC_PrepareConfig : <<include>>
+UC_Play ..> UC_PrepareInstance : <<include>>
+UC_Play ..> UC_SyncFiles : <<include>>
+
+UC_Update ..> UC_CheckUpdate : <<extend>>
+
+note right of UC_Play
+  Предусловия:
+  - выполнен вход
+  - выбран инстанс
+  - выбрана конфигурация
+end note
+
+note right of UC_CheckUpdate
+  Запускается при старте
+  или вручную.
+  Обновление - после
+  подтверждения игрока.
+end note
+
+@enduml
