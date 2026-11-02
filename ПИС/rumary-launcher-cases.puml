@@ -30,9 +30,9 @@ actor "Пользователь" as Player
   usecase "Обновить лаунчер" as UC_Update
 
   ' --- Настройки ---
-  usecase "Сменить язык" as UC_Language
   usecase "Настроить лаунчер" as UC_Settings
-  
+  usecase "Настроить параметры запуска" as UC_LaunchConfig
+
 ' ===== Игрок =====
 Player --> UC_Register
 Player --> UC_Login
@@ -41,8 +41,8 @@ Player --> UC_Play
 Player --> UC_Status
 Player --> UC_Skin
 Player --> UC_CheckUpdate
-Player --> UC_Language
 Player --> UC_Settings
+Player --> UC_LaunchConfig
 Player --> UC_Refresh
 
 ' ===== Отношения между прецедентами =====
